@@ -30,9 +30,11 @@ jobs:
           npm install
           npm run build
 
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
         with:
-          folder: counselor/dist # 這裡也要加上路徑指向子資料夾內的 dist
-          branch: gh-pages
-          token: ${{ secrets.GITHUB_TOKEN }}
+          path: 'counselor/dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
