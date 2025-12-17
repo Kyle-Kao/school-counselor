@@ -10,14 +10,30 @@ const router = createRouter({
       component: HomeView,
     },
     {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue'),
+      meta: { requiresAuth: false },
+    },
+    {
       path: '/about',
       name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue'),
+      meta: { requiresAuth: false },
     },
   ],
+})
+
+// 路由守衛 - 檢查認證
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = localStorage.getItem('token')
+  
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    // 如果需要認證但未登入，重定向到登入頁
+    next('/login')
+  } else {
+    next()
+  }
 })
 
 export default router
