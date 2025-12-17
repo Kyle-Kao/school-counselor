@@ -90,13 +90,13 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: rgb(242, 242, 242,.5);
 }
 
 .login-form {
@@ -136,14 +136,14 @@ export default {
 
 .form-group input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: darken(#dc6e31, 20%);
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .btn-login {
   width: 100%;
   padding: 0.75rem;
-  background-color: #667eea;
+  background-color: #dc6e31;
   color: white;
   border: none;
   border-radius: 4px;
@@ -154,7 +154,7 @@ export default {
 }
 
 .btn-login:hover:not(:disabled) {
-  background-color: #5568d3;
+  background-color: darken(#dc6e31, 5%);
 }
 
 .btn-login:disabled {
