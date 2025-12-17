@@ -79,14 +79,14 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import api from '@/axios'
+// import { useRouter } from 'vue-router'
+// import api from '@/axios'
 
 defineOptions({
   name: 'TeamsView'
 })
 
-const router = useRouter()
+// const router = useRouter()
 
 const tabs = ref([
   { id: '1', name: '張育德', title: '諮商心理師兼所長' },
