@@ -1,6 +1,12 @@
 <template>
   <div class="teams-container">
     <div class="title">伴空間</div>
+    <div class="content">
+      <span>伴諮商所提供溫暖、安全、舒適、隱密的各種諮商空間，讓前來的諮商的民眾可以在此放心、 安心地探索各項議題，各樓層規劃空間如下：</span>
+      <img src="https://www.companion.com.tw/images/floor%20plan_1F.png" alt="">
+      <img src="https://www.companion.com.tw/images/floor%20plan_2F.png" alt="">
+      <img src="https://www.companion.com.tw/images/floor%20plan_3F.png" alt="">
+    </div>
   </div>
 </template>
 
@@ -58,7 +64,8 @@ export default {
 
 <style scoped lang="scss">
   .teams-container {
-    max-width: 1320px;
+    // max-width: 1320px;
+    max-width: 830px;
     margin: 0 auto;
     display: flex;
     justify-content: flex-start;
@@ -86,6 +93,22 @@ export default {
         top: 50%;
         transform: translate(-130%, -50%);
       }
+    }
+  }
+
+  .content{
+    max-width: 830px;
+    width: 100%;
+    background-color: rgb(242, 242, 242,.5);
+    border-radius: 4px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    span{
+      font-size: 20px;
+      color: #555;
+      margin-bottom: 15px;
     }
   }
 </style>

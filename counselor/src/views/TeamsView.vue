@@ -1,7 +1,7 @@
 <template>
   <div class="teams-container">
+    <div class="title">諮商師團隊</div>
     <div class="content">
-      <div class="title">諮商師團隊</div>
       <div class="tabBox">
         <div 
           v-for="item in tabs" 
@@ -106,7 +106,8 @@ const setActive = (id) => {
 
 <style scoped lang="scss">
   .teams-container {
-    max-width: 1320px;
+    // max-width: 1320px;
+    max-width: 830px;
     margin: 0 auto;
     display: flex;
     justify-content: flex-start;
