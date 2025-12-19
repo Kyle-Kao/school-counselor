@@ -2,10 +2,10 @@
   <div class="teams-container">
     <div class="title">新增/編輯 消息</div>
     <div class="content">
-      <span>伴諮商所提供溫暖、安全、舒適、隱密的各種諮商空間，讓前來的諮商的民眾可以在此放心、 安心地探索各項議題，各樓層規劃空間如下：</span>
-      <img src="https://www.companion.com.tw/images/floor%20plan_1F.png" alt="">
-      <img src="https://www.companion.com.tw/images/floor%20plan_2F.png" alt="">
-      <img src="https://www.companion.com.tw/images/floor%20plan_3F.png" alt="">
+    </div>
+
+    <div class="title">新增/編輯 團隊</div>
+    <div class="content">
     </div>
   </div>
 </template>
