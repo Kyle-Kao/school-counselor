@@ -1,11 +1,22 @@
 <template>
-  <div class="teams-container">
-    <div class="title">新增/編輯 消息</div>
-    <div class="content">
+  <div class="dash-container">
+    <div class="nav">
+      <div class="account">xxx@gmail.com</div>
+      <div class="functionDiv">
+        <ul>
+          <li class="active">伴主題 Topics</li>
+          <li>伴消息 News</li>
+          <li>伴團隊 Team</li>
+        </ul>
+      </div>
+      <div class="logout">Logout</div>
     </div>
 
-    <div class="title">新增/編輯 團隊</div>
-    <div class="content">
+    <div class="rightContent">
+      <div class="addItem">New</div>
+      <div class="tableContent">
+
+      </div>
     </div>
   </div>
 </template>
@@ -63,52 +74,65 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  .teams-container {
-    // max-width: 1320px;
-    max-width: 830px;
-    margin: 0 auto;
+  .dash-container {
+    width: 100%;
     display: flex;
-    justify-content: flex-start;
     align-items: center;
-    flex-direction: column;
-    min-height: 60vh;
+    justify-content: center;
+    min-height: calc(100vh - 180px);
     font-size: 16px;
     color: #555;
 
-    .title {
-      font-weight: normal;
-      font-size: 40px;
-      color: #dc6e31;
-      position: relative;
-      align-self: flex-start;
-      &:before{
-        display: inline-block;
-        position: absolute;
-        content: '';
-        width: 60px;
-        height: 2px;
+    .nav{
+      flex: 20%;
+      align-self: stretch;
+      background-color: #fff;
+      padding: 40px 20px;
+    }
+
+    .rightContent{
+      flex: 80%;
+      align-self: stretch;
+      background-color: rgba(242, 242, 242, 0.5);
+      padding: 40px 20px;
+    }
+  }
+
+  .functionDiv{
+    border: 1px solid #E9ECEF;
+    border-radius: 5px;
+    font-size: 16px;
+    margin: 15px 0;
+    overflow: hidden;
+    li{
+      padding: 10px 20px;
+      cursor: pointer;
+
+      &.active, &:hover{
         background-color: #dc6e31;
-        border-radius: 30px;
-        left: 0%;
-        top: 50%;
-        transform: translate(-130%, -50%);
+        color: #fff;
       }
     }
   }
 
-  .content{
-    max-width: 830px;
-    width: 100%;
-    background-color: rgb(242, 242, 242,.5);
-    border-radius: 4px;
-    padding: 20px;
+  .logout{
+    text-decoration: underline;
+    color: #ABB5BE;
+    font-size: 14px;
+  }
+
+  .rightContent{
     display: flex;
-    align-items: center;
     flex-direction: column;
-    span{
-      font-size: 20px;
-      color: #555;
-      margin-bottom: 15px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 50px;
+    font-size: 16px;
+    .addItem{
+      background-color: #dc6e31;
+      border-radius: 10px;
+      color: #fff;
+      padding: 10px 20px;
     }
   }
 </style>
