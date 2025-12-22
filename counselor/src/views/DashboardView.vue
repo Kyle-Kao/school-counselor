@@ -18,49 +18,23 @@
     </div>
 
     <div class="rightContent">
-      <div class="addItem">New</div>
+      <DashboardSetting 
+        :currentAction="currentAction" 
+        :columns="columns" 
+        :data="data" 
+        :curretNav="navTabs.find(_n => _n.id === currentNav)"
+        @cancel="cancel"
+      />
+      <!-- <div class="addItem">New</div>
       <div class="tableContent">
-        <n-data-table
-          v-if="currentAction === 'normal'"
-          :columns="columns"
-          :data="data"
-          :pagination="{ pageSize: 10 }"
-          :bordered="false"
+        <DashboardSetting 
+          :currentAction="currentAction" 
+          :columns="columns" 
+          :data="data" 
+          :curretNav="navTabs.find(_n => _n.id === currentNav)"
+          @cancel="cancel"
         />
-        <div v-else>
-          <div class="newsDiv">
-            <div class="inputArea">
-              <label for="title">Title*</label>
-              <input type="text" placeholder="最多25字，超過顯示...">
-            </div>
-            <div class="inputArea">
-              <label for="title">Content*</label>
-              <input type="text" placeholder="最多25字，超過顯示...">
-            </div>
-            <div class="inputArea">
-              <label for="title">Notice*</label>
-              <input type="text" placeholder="最多25字，超過顯示...">
-            </div>
-            <div class="inputArea">
-              <label for="title">Service*</label>
-              <input type="text" placeholder="最多25字，超過顯示...">
-            </div>
-            <div class="inputArea">
-              <label for="title">Images*</label>
-              <input type="file" placeholder="最多25字，超過顯示...">
-            </div>
-            <div class="inputArea">
-              <label for="title">Link*</label>
-              <input type="text" placeholder="最多25字，超過顯示...">
-            </div>
-
-            <div class="btnBox">
-              <div class="save">Save</div>
-              <div class="cancel" @click="cancel">Cancel</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -71,6 +45,8 @@ import { useRouter } from 'vue-router'
 import api from '@/axios'
 import { h, defineComponent } from 'vue'
 import { NDataTable, NButton, useMessage } from 'naive-ui'
+import DashboardSetting from '@/components/DashboardSetting.vue'
+
 
 defineOptions({
   name: 'DashboardView'
@@ -168,6 +144,7 @@ const data = [
 
 const chgNav = (nav) => {
   currentNav.value = nav.id
+  currentAction.value = 'normal'
 }
 
 const handleEdit = (data) => {
