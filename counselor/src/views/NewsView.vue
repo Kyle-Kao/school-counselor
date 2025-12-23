@@ -3,7 +3,7 @@
     <div class="title">伴消息</div>
     <div class="content">
       <div class="tabBox">
-        <div 
+        <!-- <div 
           v-for="item in tabs" 
           :key="item.id"
           class="tab"
@@ -13,10 +13,27 @@
           {{ item.name }}
           <br>
           {{ item.title }}
+        </div> -->
+        <div 
+          v-for="item in currentService" 
+          :key="item.id"
+          class="tab"
+          :class="{ active: activeTab === item.name }"
+          @click="setActive(item.name)"
+        >
+          <!-- {{ item.name }}
+          <br> -->
+          {{ item.label }}
         </div>
       </div>
       <div class="content-des">更多即時課程及活動訊息請上本所</div>
-      <div class="content-detail">
+
+      <div class="content-detail" v-for="(news, index) in filteredData" :key="index">
+        <div class="time">{{ news.createTime }} | {{ news.serviceLabel }}</div>
+        <div class="newsTitle">{{ news.title }}</div>
+      </div>
+
+      <!-- <div class="content-detail">
         <div class="time">2025.04.25 | 行政公告</div>
         <div class="newsTitle">國軍心理健康照護方案 即日起上路！</div>
       </div>
@@ -31,7 +48,7 @@
       <div class="content-detail">
         <div class="time">2025.04.25 | 行政公告</div>
         <div class="newsTitle">國軍心理健康照護方案 即日起上路！</div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -39,7 +56,8 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import api from '@/axios'
+import { getNews, getService } from '@/apis'
+import { onMounted, computed } from 'vue'
 
 defineOptions({
   name: 'NewsView'
@@ -55,11 +73,48 @@ const tabs = ref([
   { id: 'announcement', name: '行政公告' }
 ])
 
-const activeTab = ref('all')
+const allNews = ref([])
+const currentData = ref([])
+const currentService = ref([])
+
+const activeTab = ref('individual')
 
 const setActive = (id) => {
   activeTab.value = id
+  currentData.value = currentData.value.filter(item => item.name === id)
 }
+
+const filteredData = computed(() => {
+  return allNews.value.filter(item => item.serviceName === activeTab.value)
+})
+
+ const fetchNews = async () => {
+    try {
+      const params = {
+        category: activeTab.value === 'all' ? undefined : activeTab.value
+      }
+      const response = await getNews(params)
+      allNews.value = response.data
+
+    } catch (error) {
+      console.error("Error fetching news data:", error)
+    }
+  }
+
+ const fetchService = async () => {
+    try {
+      const response = await getService()
+      currentService.value = response.data
+
+    } catch (error) {
+      console.error("Error fetching news data:", error)
+    }
+  }
+
+  onMounted(() => {
+    fetchNews()
+    fetchService()
+  })
 
 </script>
 
@@ -136,6 +191,7 @@ const setActive = (id) => {
   .tabBox{
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 20px;
     .tab{
@@ -145,6 +201,8 @@ const setActive = (id) => {
       color: #555;
       cursor: pointer;
       border: 1px solid #ddd;
+      align-self: stretch;
+      white-space: nowrap;
       &.active{
         background-color: #dc6e31;
         color: white;
