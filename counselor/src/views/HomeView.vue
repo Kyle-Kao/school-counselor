@@ -55,6 +55,8 @@
 
 <script setup>
   import { ref } from 'vue'
+  import { getTest } from '@/apis'
+  import { onMounted } from 'vue'
 
   defineOptions({
     name: 'HomeView'
@@ -75,6 +77,19 @@
       }
     }
   })
+
+  const fetchTest = async () => {
+    try {
+      const response = await getTest()
+    } catch (error) {
+      console.error("Error fetching test data:", error)
+    }
+  }
+
+  onMounted(() => {
+    fetchTest()
+  })
+
 </script>
 
 <style scoped lang="scss">
