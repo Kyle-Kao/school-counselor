@@ -20,10 +20,12 @@
     <div class="rightContent">
       <DashboardSetting 
         :currentAction="currentAction" 
-        :columns="columns" 
-        :data="data" 
+        :columns="currentColumns" 
+        :data="currentData" 
+        @add-item="addItem"
         :curretNav="navTabs.find(_n => _n.id === currentNav)"
         @cancel="cancel"
+        @save="save"
       />
       <!-- <div class="addItem">New</div>
       <div class="tableContent">
@@ -40,8 +42,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'  
+import { getTopics, getNews, getAllStaff, addTopics, removeTopics } from '@/apis'
 import api from '@/axios'
 import { h, defineComponent } from 'vue'
 import { NDataTable, NButton, useMessage } from 'naive-ui'
@@ -55,6 +58,8 @@ defineOptions({
 const router = useRouter()
 const currentAction = ref('normal')
 const currentNav = ref('topics')
+const currentColumns = ref([])
+const currentData = ref([])
 
 const navTabs = [
   {
@@ -71,8 +76,8 @@ const navTabs = [
   },
 ]
 
-// 1. 定義表格欄位配置 (Columns)
-const columns = [
+// 1. 主題定義表格欄位配置 (Columns)
+const TopicsColumns = [
   {
     title: '#', // 欄位名稱
     type: 'index', // ✅ 關鍵：這會自動生成從 1 開始的序號
@@ -83,16 +88,12 @@ const columns = [
     }
   },
   {
-    title: '姓名',
-    key: 'name'
+    title: '類別',
+    key: 'label'
   },
   {
-    title: '年齡',
-    key: 'age'
-  },
-  {
-    title: '地址',
-    key: 'address'
+    title: '描述',
+    key: 'description'
   },
   {
     title: '操作',
@@ -124,7 +125,7 @@ const columns = [
               size: 'small',
               onClick: () => {
                 if(confirm(`確定要刪除 ${row.name} 嗎？`)) {
-                   console.log('執行刪除邏輯', row.key)
+                  handleRemove(row)
                 }
               }
             },
@@ -136,14 +137,215 @@ const columns = [
   }
 ]
 
+// 消息
+const NewsColumns = [
+  {
+    title: '#', // 欄位名稱
+    type: 'index', // ✅ 關鍵：這會自動生成從 1 開始的序號
+    width: 60,
+    align: 'center',
+    render: (_, index) => {
+      return h('span', index + 1)
+    }
+  },
+  {
+    title: '主題',
+    width: 60,
+    key: 'title'
+  },
+  {
+    title: '內容',
+    width: 80,
+    key: 'content'
+  },
+  {
+    title: '連結',
+    width: 60,
+    key: 'link'
+  },
+  {
+    title: '編輯者',
+    width: 80,
+    key: 'titleName'
+  },
+  {
+    title: '服務',
+    width: 60,
+    key: 'serviceName'
+  },
+  {
+    title: '狀態',
+    width: 60,
+    key: 'status'
+  },
+  {
+    title: '操作',
+    key: 'actions',
+    // 使用 h 函式渲染自定義按鈕
+    render (row) {
+      return h(
+        'div',
+        { style: { display: 'flex', gap: '8px' } }, 
+        [
+          // 編輯按鈕
+          h(
+            NButton,
+            {
+              strong: true,
+              tertiary: true,
+              size: 'small',
+              onClick: () => handleEdit(row)
+            },
+            { default: () => 'Edit' }
+          ),
+          // 刪除按鈕
+          h(
+            NButton,
+            {
+              strong: true,
+              tertiary: true,
+              type: 'error', // 使用紅色警示
+              size: 'small',
+              onClick: () => {
+                if(confirm(`確定要刪除 ${row.name} 嗎？`)) {
+                   handleRemove(row)
+                }
+              }
+            },
+            { default: () => 'Del' }
+          )
+        ]
+      )
+    }
+  }
+]
+
+// 團隊
+const TeamColumns = [
+  {
+    title: '#', // 欄位名稱
+    type: 'index', // ✅ 關鍵：這會自動生成從 1 開始的序號
+    width: 60,
+    align: 'center',
+    render: (_, index) => {
+      return h('span', index + 1)
+    }
+  },
+  {
+    title: '名稱',
+    width: 60,
+    key: 'name'
+  },
+  {
+    title: '信箱',
+    width: 60,
+    key: 'email'
+  },
+  {
+    title: '密碼',
+    width: 60,
+    key: 'password'
+  },
+  {
+    title: '職務',
+    width: 60,
+    key: 'title'
+  },
+  {
+    title: '操作',
+    key: 'actions',
+    // 使用 h 函式渲染自定義按鈕
+    render (row) {
+      return h(
+        'div',
+        { style: { display: 'flex', gap: '8px' } }, 
+        [
+          // 編輯按鈕
+          h(
+            NButton,
+            {
+              strong: true,
+              tertiary: true,
+              size: 'small',
+              onClick: () => handleEdit(row)
+            },
+            { default: () => 'Edit' }
+          ),
+          // 刪除按鈕
+          h(
+            NButton,
+            {
+              strong: true,
+              tertiary: true,
+              type: 'error', // 使用紅色警示
+              size: 'small',
+              onClick: () => {
+                if(confirm(`確定要刪除 ${row.name} 嗎？`)) {
+                   handleRemove(row)
+                }
+              }
+            },
+            { default: () => 'Del' }
+          )
+        ]
+      )
+    }
+  }
+]
+
+
 // 2. 準備數據 (Data)
 const data = [
   { key: 0, name: '張三', age: 32, address: '台北市信義區' },
   { key: 1, name: '李四', age: 28, address: '台中市西屯區' }
 ]
 
+const fetchTopics = async () => {
+    try {
+      const response = await getTopics()
+      currentData.value = response.data
+
+    } catch (error) {
+      console.error("Error fetching topics data:", error)
+    }
+  }
+const fetchNews = async () => {
+    try {
+      const response = await getNews()
+      currentData.value = response.data
+
+    } catch (error) {
+      console.error("Error fetching news data:", error)
+    }
+  }
+const fetchStaff = async () => {
+    try {
+      const response = await getAllStaff()
+      currentData.value = response.data
+
+    } catch (error) {
+      console.error("Error fetching staff data:", error)
+    }
+  }
+
 const chgNav = (nav) => {
   currentNav.value = nav.id
+  switch (nav.id) {
+    case 'topics':
+      fetchTopics()
+      currentColumns.value = TopicsColumns
+      break;
+    case 'news':
+      fetchNews()
+      currentColumns.value = NewsColumns
+      break;
+    case 'team':
+      fetchStaff()
+      currentColumns.value = TeamColumns
+      break;
+    default:
+      break;
+  }
   currentAction.value = 'normal'
 }
 
@@ -152,9 +354,82 @@ const handleEdit = (data) => {
   console.log(`編輯:: ${data.name} ${currentAction.value}`)
 }
 
+const handleRemove = async (data) => {
+  console.log('data:: ', data)
+  console.log(`刪除:: ${data} ${currentNav.value}`)
+
+  switch (currentNav.value) {
+    case 'topics':
+      const deleteData = {
+        name: data.name
+      }
+      await removeTopics(deleteData)
+      fetchTopics()
+      break;
+    case 'news':
+      api.delete(`/news/${data.id}`)
+        .then(() => {
+          fetchNews()
+        })
+        .catch((error) => {
+          console.error("Error deleting news:", error)
+        })
+      break;
+    case 'team':
+      api.delete(`/staff/${data.id}`)
+        .then(() => {
+          fetchStaff()
+        })
+        .catch((error) => {
+          console.error("Error deleting staff:", error)
+        })
+      break;
+    default:
+      break;
+  }
+
+}
+
+const addItem = async (child) => {
+  currentAction.value = 'add'
+  console.log(`新增:: ${child}`)
+}
+
 const cancel = () => {
   currentAction.value = 'normal'
 }
+
+const save = async (child) => {
+  currentAction.value = 'normal'
+  console.log('currentNav:: ', currentNav.value)
+
+  switch (currentNav.value) {
+    case 'topics':
+      console.log('save:: ', child)
+      const { name, label, description } = child
+      // const { name, label, description, title, content, notice, service, images, link } = child
+      await addTopics({
+        name,
+        label,
+        description
+      })
+      fetchTopics()
+      break;
+    case 'news':
+      fetchNews()
+      break;
+    case 'team':
+      fetchStaff()
+      break;
+    default:
+      break;
+  }
+}
+
+ onMounted(() => {
+    fetchTopics()
+    currentColumns.value = TopicsColumns
+  })
 
 </script>
 

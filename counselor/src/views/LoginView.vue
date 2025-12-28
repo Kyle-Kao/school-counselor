@@ -41,6 +41,7 @@
 <script>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { getLogin } from '@/apis'
 import api from '@/axios'
 
 export default {
@@ -58,16 +59,17 @@ export default {
 
       try {
         // 調用登入 API
-        const response = await api.post('/login', {
+        const response = await getLogin({
           email: email.value,
           password: password.value,
         })
 
         // 保存 token 到 localStorage
-        if (response.token) {
-          localStorage.setItem('token', response.token)
-          localStorage.setItem('user', JSON.stringify(response.user))
+        if (response.data) {
+          // localStorage.setItem('token', response.token)
+          // localStorage.setItem('user', JSON.stringify(response.user))
 
+          alert(`登入成功！ 權限為${response.data.name}`)
           // 重定向到首頁
           router.push('/')
         }
