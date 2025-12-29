@@ -13,23 +13,27 @@
       <div class="issueBox issueBox-3">
         <div class="issue">
           <div class="issue__title">成人</div>
-          <div class="issue__des">焦慮與憂鬱、情緒困擾、壓力、人際困擾、創傷、哀傷與失落、生涯發展與自我探索等。</div>
+          <div class="issue__des">{{ getType('individual') }}</div>
         </div>
-        <div class="issue">
+        <!-- <div class="issue">
           <div class="issue__title">成人</div>
           <div class="issue__des">焦慮與憂鬱、情緒困擾、壓力、人際困擾、創傷、哀傷與失落、生涯發展與自我探索等。</div>
+        </div> -->
+        <div class="issue">
+          <div class="issue__title">兒童</div>
+          <div class="issue__des">{{ getType('child') }}</div>
         </div>
         <div class="issue">
-          <div class="issue__title">成人</div>
-          <div class="issue__des">焦慮與憂鬱、情緒困擾、壓力、人際困擾、創傷、哀傷與失落、生涯發展與自我探索等。</div>
+          <div class="issue__title">青少年</div>
+          <div class="issue__des">{{ getType('teen') }}</div>
         </div>
         <div class="issue">
-          <div class="issue__title">成人</div>
-          <div class="issue__des">焦慮與憂鬱、情緒困擾、壓力、人際困擾、創傷、哀傷與失落、生涯發展與自我探索等。</div>
+          <div class="issue__title">父母、主要照顧者</div>
+          <div class="issue__des">{{ getType('parent') }}</div>
         </div>
         <div class="issue">
-          <div class="issue__title">成人</div>
-          <div class="issue__des">焦慮與憂鬱、情緒困擾、壓力、人際困擾、創傷、哀傷與失落、生涯發展與自我探索等。</div>
+          <div class="issue__title">伴侶、配偶</div>
+          <div class="issue__des">{{ getType('couple') }}</div>
         </div>
       </div>
       <div class="subTitle orange">服務項目</div>
@@ -55,56 +59,38 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref } from 'vue'
+import { getServiceTopic } from '@/apis'
 import { useRouter } from 'vue-router'
-import api from '@/axios'
+import { onMounted, computed } from 'vue'
 
-export default {
-  name: 'ServiceView',
-  setup() {
-    const router = useRouter()
-    const email = ref('')
-    const password = ref('')
-    const isLoading = ref(false)
-    const errorMessage = ref('')
+const currentData = ref([])
 
-    const handleLogin = async () => {
-      isLoading.value = true
-      errorMessage.value = ''
+defineOptions({
+  name: 'ServiceView'
+})
 
-      try {
-        // 調用登入 API
-        const response = await api.post('/login', {
-          email: email.value,
-          password: password.value,
-        })
+const fetchServices = async () => {
+    try {
+      const response = await getServiceTopic()
+      currentData.value = response.data
 
-        // 保存 token 到 localStorage
-        if (response.token) {
-          localStorage.setItem('token', response.token)
-          localStorage.setItem('user', JSON.stringify(response.user))
+      // individual 成人
 
-          // 重定向到首頁
-          router.push('/')
-        }
-      } catch (error) {
-        errorMessage.value = error.response?.data?.message || '登入失敗，請檢查郵箱和密碼'
-        console.error('登入錯誤:', error)
-      } finally {
-        isLoading.value = false
-      }
+    } catch (error) {
+      console.error("Error fetching staff data:", error)
     }
+  }
 
-    return {
-      email,
-      password,
-      isLoading,
-      errorMessage,
-      handleLogin,
-    }
-  },
-}
+const getType = (type) => {
+    // console.log(type, currentData.value.filter(item => item.type === type))
+    return computed(() => currentData.value.filter(item => item.name === type).map(_c => _c.topicLabel).join('、')).value
+  }
+
+  onMounted(() => {
+    fetchServices()
+  })
 </script>
 
 <style scoped lang="scss">

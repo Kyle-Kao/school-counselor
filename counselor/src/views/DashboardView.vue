@@ -44,7 +44,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'  
-import { getTopics, getNews, getAllStaff, addTopics, removeTopics } from '@/apis'
+import { getTopics, getNews, getAllStaff, addTopics, removeTopics, updateTopics } from '@/apis'
 import api from '@/axios'
 import { h, defineComponent } from 'vue'
 import { NDataTable, NButton, useMessage } from 'naive-ui'
@@ -179,8 +179,10 @@ const NewsColumns = [
     key: 'status'
   },
   {
-    title: '操作',
+    title: '操作',  
     key: 'actions',
+    width: 100,
+    fixed: 'right',
     // 使用 h 函式渲染自定義按鈕
     render (row) {
       return h(
@@ -301,6 +303,7 @@ const data = [
 ]
 
 const fetchTopics = async () => {
+    currentData.value = []
     try {
       const response = await getTopics()
       currentData.value = response.data
@@ -310,6 +313,7 @@ const fetchTopics = async () => {
     }
   }
 const fetchNews = async () => {
+  currentData.value = []
     try {
       const response = await getNews()
       currentData.value = response.data
@@ -319,6 +323,7 @@ const fetchNews = async () => {
     }
   }
 const fetchStaff = async () => {
+  currentData.value = []
     try {
       const response = await getAllStaff()
       currentData.value = response.data
@@ -349,14 +354,32 @@ const chgNav = (nav) => {
   currentAction.value = 'normal'
 }
 
-const handleEdit = (data) => {
+const handleEdit = async (data) => {
   currentAction.value = 'edit'
-  console.log(`編輯:: ${data.name} ${currentAction.value}`)
+  console.log('data:: ', data)
+  console.log(`編輯:: ${currentAction.value} ${currentNav.value}`)
+  currentData.value = data
+  // switch (currentNav.value) {
+  //   case 'topics':
+  //     const data = {
+  //       name: data.name,
+  //       label: data.label,
+  //       description: data.description
+  //     }
+  //     await updateTopics(data)
+  //     break;
+  //   case 'news':
+  //     break;
+  //   case 'team':
+  //     break;
+  //   default:
+  //     break;
+  // } 
 }
 
 const handleRemove = async (data) => {
-  console.log('data:: ', data)
-  console.log(`刪除:: ${data} ${currentNav.value}`)
+  // console.log('data:: ', data)
+  // console.log(`刪除:: ${data} ${currentNav.value}`)
 
   switch (currentNav.value) {
     case 'topics':
@@ -397,18 +420,32 @@ const addItem = async (child) => {
 
 const cancel = () => {
   currentAction.value = 'normal'
+  currentData.value = []
+  switch (currentNav.value) {
+    case 'topics':
+      fetchTopics()
+      break;
+    case 'news':
+      fetchNews()
+      break;
+    case 'team':
+      fetchStaff()
+      break;
+    default:
+      break;
+  }
 }
 
 const save = async (child) => {
-  currentAction.value = 'normal'
   console.log('currentNav:: ', currentNav.value)
-
+  console.log('currentAction:: ', currentAction.value)
   switch (currentNav.value) {
     case 'topics':
       console.log('save:: ', child)
       const { name, label, description } = child
+      const api = currentAction.value === 'edit' ? updateTopics : addTopics
       // const { name, label, description, title, content, notice, service, images, link } = child
-      await addTopics({
+      await api({
         name,
         label,
         description
@@ -424,6 +461,7 @@ const save = async (child) => {
     default:
       break;
   }
+  currentAction.value = 'normal'
 }
 
  onMounted(() => {

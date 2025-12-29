@@ -20,6 +20,10 @@ export const getStaff = () => {
   return api.get("/api/staff");
 }
 
+export const getServiceTopic = () => {
+  return api.get("/api/serviceTopic");
+}
+
 export const getAllStaff = () => {
   return api.get("/api/allstaff");
 }
@@ -39,4 +43,8 @@ export const addTopics = (data) => {
 
 export const removeTopics = (data) => {
   return api.delete("/api/removeTopics", { data });
+}
+
+export const updateTopics = (data) => {
+  return api.put("/api/updateTopics", data);
 }

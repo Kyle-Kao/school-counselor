@@ -15,7 +15,7 @@
         <div v-if="props.curretNav.id === 'topics'" class="newsDiv">
           <div class="inputArea">
             <label for="title">Name*</label>
-            <input type="text" placeholder="最多25字，超過顯示..." v-model="formData.name">
+            <input type="text" placeholder="最多25字，超過顯示..." v-model="formData.name" :disabled="currentAction === 'edit'">
           </div>
           <div class="inputArea">
             <label for="title">Label*</label>
@@ -86,7 +86,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref } from 'vue'
+import { defineProps, defineEmits, ref, watch } from 'vue'
 import { h, defineComponent } from 'vue'
 import { NDataTable, NButton, useMessage } from 'naive-ui'
 
@@ -109,7 +109,30 @@ const props = defineProps({
   }
 });
 
+console.log('data in DashboardSetting:', props.data);
+
+watch(
+  () => props.data,
+  (newVal) => {
+    if (props.currentAction === 'edit' && newVal) {
+      // 如果傳入的是陣列（通常是從列表點擊編輯時傳入的那一筆物件）
+      // 或是直接傳入單一物件，進行解構賦值
+      const source = Array.isArray(newVal) ? newVal[0] : newVal;
+      if (source) {
+        formData.value = {
+          ...formData.value,
+          ...source
+        };
+      }
+    }
+  },
+  { immediate: true, deep: true }
+);
+
 const formData = ref({
+  name:'',
+  label:'',
+  description:'',
   title: '',
   content: '',
   notice: '',
