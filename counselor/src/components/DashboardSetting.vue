@@ -51,12 +51,12 @@
           </div>
           <div class="inputArea">
             <label for="title">Images*</label>
-            <!-- <input type="file" placeholder="最多25字，超過顯示..." v-model="formData.images"> -->
-            <input type="text" placeholder="最多25字，超過顯示..." v-model="formData.images">
+            <input type="file" accept="image/*" ref="fileInput" @change="handleFileChange">
+            <!-- <input type="text" placeholder="最多25字，超過顯示..." v-model="formData.images"> -->
           </div>
           <div class="inputArea">
             <label for="title">Link*</label>
-            <input type="text" placeholder="最多25字，超過顯示...">
+            <input type="text" placeholder="最多25字，超過顯示..." v-model="formData.link">
           </div>
 
           <div class="btnBox">
@@ -123,6 +123,13 @@ const emit = defineEmits(['cancel', 'add-item', 'save']);
 defineOptions({
   name: 'DashboardSetting'
 })
+
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    formData.value.images = file;
+  }
+};
 
 const cancel = () => {
   emit('cancel');
