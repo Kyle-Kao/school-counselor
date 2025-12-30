@@ -34,6 +34,12 @@
     </div>
 
     <!-- 測試 -->
+    <div class="btnBox">
+      <div class="btn" @click="fetchTest">取得主題資料</div>
+      <div class="btn" @click="fetchTest">取得服務資料</div>
+      <div class="btn" @click="fetchTest">取得諮商師資料</div>
+      <div class="btn" @click="fetchTest">取得服務對象與議題資料</div>
+    </div>
     <div class="mainTextArea">
       <div class="input">
         <!-- <input type="textarea"> -->
@@ -213,5 +219,19 @@
   }
   }
 
-  
+  .btnBox{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px auto;
+    justify-content: center;
+    .btn{
+      border: 2px solid #dc6e31;
+      border-radius: 4px;
+      padding: 5px 20px;
+      cursor: pointer;
+      color: #fff;
+      background-color: #dc6e31;
+    }
+  }  
 </style>

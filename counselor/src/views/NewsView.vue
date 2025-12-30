@@ -28,7 +28,7 @@
       </div>
       <div class="content-des">更多即時課程及活動訊息請上本所</div>
 
-      <div class="content-detail" v-for="(news, index) in filteredData" :key="index">
+      <div class="content-detail" v-for="(news, index) in filteredData" :key="index" @click="getDetail(news)">
         <div class="time">{{ news.createTime }} | {{ news.serviceLabel }}</div>
         <div class="newsTitle">{{ news.title }}</div>
       </div>
@@ -49,6 +49,20 @@
         <div class="time">2025.04.25 | 行政公告</div>
         <div class="newsTitle">國軍心理健康照護方案 即日起上路！</div>
       </div> -->
+    </div>
+
+  </div>
+
+  <div class="mack" v-if="onMask" @click="resetMask">
+    <div class="maskCard">
+      <div class="time">{{ currentDetail.createTime }} | {{ currentDetail.serviceLabel }}</div>
+      <div>link: {{ currentDetail.link }}</div>
+      <div class="newsTitle">{{ currentDetail.title }}</div>
+      <div class="newsDes">{{ currentDetail.description }}</div>
+      <div>
+        文章內容：
+        {{ currentDetail.content }}
+      </div>
     </div>
   </div>
 </template>
@@ -76,12 +90,25 @@ const tabs = ref([
 const allNews = ref([])
 const currentData = ref([])
 const currentService = ref([])
+const currentDetail = ref({})
+const onMask = ref(false)
 
 const activeTab = ref('individual')
 
 const setActive = (id) => {
   activeTab.value = id
   currentData.value = currentData.value.filter(item => item.name === id)
+}
+
+const getDetail = (news) => {
+  onMask.value = true
+  currentDetail.value = news
+  console.log('click', news)
+}
+
+const resetMask = () => {
+  onMask.value = false
+  currentDetail.value = {}
 }
 
 const filteredData = computed(() => {
@@ -208,5 +235,31 @@ const filteredData = computed(() => {
         color: white;
       }
     }
+  }
+
+  .mack{
+    position: absolute;
+    width: 100dvw;
+    height: 100dvh;
+    left: 0;
+    top: 0;
+    z-index: 9999;
+    background-color: rgba(0,0,0,0.5);
+  }
+
+  .maskCard{
+    position: absolute;
+    width: 600px;
+    height: 50%;
+    background-color: #fff;
+    border-radius: 30px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+    padding: 20px;
   }
 </style>
