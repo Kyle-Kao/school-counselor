@@ -35,17 +35,17 @@
 
     <!-- 測試 -->
     <div class="btnBox">
-      <div class="btn" @click="fetchTest">取得主題資料</div>
-      <div class="btn" @click="fetchTest">取得服務資料</div>
-      <div class="btn" @click="fetchTest">取得諮商師資料</div>
-      <div class="btn" @click="fetchTest">取得服務對象與議題資料</div>
+      <div class="btn" @click="setInput('topic')">取得主題資料</div>
+      <div class="btn" @click="setInput('news')">取得新聞資料</div>
+      <div class="btn" @click="setInput('profile')">取得諮商師資料</div>
+      <div class="btn" @click="setInput('serviceTopic')">取得服務對象與議題資料</div>
     </div>
     <div class="mainTextArea">
       <div class="input">
         <!-- <input type="textarea"> -->
-        <textarea name="input" id="input"></textarea>
+        <textarea name="input" id="input" v-model="currentInput"></textarea>
       </div>
-      <div class="btn">送出</div>
+      <div class="btn" @click="getOutput">送出</div>
       <div class="output">
         <json-viewer
           :value="jsonData"
@@ -61,34 +61,112 @@
 
 <script setup>
   import { ref } from 'vue'
-  import { getTest } from '@/apis'
+  import { getTest, getTopics, getNews, getProfile, getServiceTopic } from '@/apis'
   import { onMounted } from 'vue'
 
   defineOptions({
     name: 'HomeView'
   })
 
-  const jsonData = ref({
-    status: "success",
-    data: {
-      id: 101,
-      category: "school-counselor",
-      items: [
-        { name: "全部", active: true },
-        { name: "行政公告", active: false }
-      ],
-      config: {
-        isSaleByDate: undefined,
-        theme: "darken"
-      }
-    }
-  })
+  const jsonData = ref({})
+
+  const currrentApi = ref('topic')
+  const currentInput = ref('')
 
   const fetchTest = async () => {
     try {
       const response = await getTest()
     } catch (error) {
       console.error("Error fetching test data:", error)
+    }
+  }
+
+  const setInput = (api) => {
+    currrentApi.value = api
+    switch (api) {
+      case 'topic':
+        currentInput.value = 'SELECT * FROM "Topics";'
+      break;
+      case 'news':
+        currentInput.value = `
+        SELECT 
+          n."Id",
+          n."Title",
+          n."Content",
+          n."Notice",
+          n."Link",
+          n."CreateTime",
+          n."UpdateTime",
+          n."TitleName",
+          n."ServiceName",
+          s."Label" AS "ServiceLabel",  
+          n."Status",
+          n."Img"
+        FROM "News" AS n
+        LEFT JOIN "Services" AS s ON n."ServiceName" = s."Name";
+        
+        (透過 Left Join，將 News (新聞) 與 Services (服務) 兩個表格關聯起來，並取得服務的標籤 (Label) 欄位。)
+        `
+      break;
+      case 'profile':
+        currentInput.value = `
+        SELECT 
+          p."Id",
+          p."Certification",
+          p."Education",
+          p."Experience",
+          p."Description",
+          s."Name" AS "StaffName",
+          s."Email" AS "StaffEmail",
+          s."Title" AS "StaffTitle",
+          s."Photo" AS "StaffPhoto"
+        FROM "Profile" AS p 
+        LEFT JOIN "Staff" AS s ON p."Id" = s."Id" 
+        WHERE p."Id" = '98765432-10fe-dcba-9876-543210fedcba';
+        
+        (透過Left Join，加上了 WHERE 條件過濾單筆資料)
+      `
+      break;
+      case 'serviceTopic':
+        currentInput.value = `
+        SELECT 
+          s."Name",
+          s."Label",
+          s."Target",
+          s."Type",
+          t."Label" AS "topicLabel",
+          t."Description" AS "topicDescription"
+        FROM "Services" AS s
+        INNER JOIN "ServiceTopics" AS st ON s."Name" = st."ServiceName"
+        INNER JOIN "Topics" AS t ON st."TopicName" = t."Name";
+
+
+        (多對多的關聯查詢。透過中間表 ServiceTopic 將 Service (服務) 與 Topic (主題) 連接起來)
+        `
+      break;
+    }
+  }
+
+  const getOutput = async () => {
+    try {
+      let response
+      switch (currrentApi.value) {
+        case 'topic':
+          response = await getTopics()
+        break;
+        case 'news':
+          response = await getNews()
+        break;
+        case 'profile':
+          response = await getProfile({id: '98765432-10fe-dcba-9876-543210fedcba'})
+        break;
+        case 'serviceTopic':
+          response = await getServiceTopic()
+        break;
+      }
+      jsonData.value = response.data
+    } catch (error) {
+      console.error("Error fetching output data:", error)
     }
   }
 
@@ -147,7 +225,7 @@
   .mainTextArea {
     margin-top: 2rem;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 1rem; 
     width: 80%;
     margin: 20px auto;
