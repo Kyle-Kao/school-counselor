@@ -202,7 +202,7 @@ const resetForm = () => {
     }
 
   .tableContent{
-    max-width: 70%;
+    max-width: 100%;
     width: 100%;
   }
 

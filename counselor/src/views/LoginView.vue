@@ -66,10 +66,11 @@ export default {
 
         // 保存 token 到 localStorage
         if (response.data) {
-          // localStorage.setItem('token', response.token)
+          localStorage.setItem('user', response.data.email)
           // localStorage.setItem('user', JSON.stringify(response.user))
 
           alert(`登入成功！ 權限為${response.data.name}`)
+          window.dispatchEvent(new Event('user-updated'))
           // 重定向到首頁
           router.push('/dashboard')
         }
@@ -97,7 +98,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: calc(100dvh - 350px);
   background-color: rgb(242, 242, 242,.5);
 }
 

@@ -1,7 +1,7 @@
 <template>
   <div class="dash-container">
     <div class="nav">
-      <div class="account">xxx@gmail.com</div>
+      <div class="account">{{ user }}</div>
       <div class="functionDiv">
         <ul>
           <li 
@@ -14,7 +14,7 @@
           </li>
         </ul>
       </div>
-      <div class="logout">Logout</div>
+      <div class="logout" @click="logout">Logout</div>
     </div>
 
     <div class="rightContent">
@@ -56,6 +56,7 @@ defineOptions({
 })
 
 const router = useRouter()
+const user = ref(null)
 const currentAction = ref('normal')
 const currentNav = ref('topics')
 const currentColumns = ref([])
@@ -98,6 +99,7 @@ const TopicsColumns = [
   {
     title: '操作',
     key: 'actions',
+    fixed: 'right',
     // 使用 h 函式渲染自定義按鈕
     render (row) {
       return h(
@@ -150,12 +152,10 @@ const NewsColumns = [
   },
   {
     title: '主題',
-    width: 60,
     key: 'title'
   },
   {
     title: '內容',
-    width: 80,
     key: 'content'
   },
   {
@@ -171,7 +171,7 @@ const NewsColumns = [
   {
     title: '服務',
     width: 60,
-    key: 'serviceName'
+    key: 'serviceLabel'
   },
   {
     title: '狀態',
@@ -181,7 +181,7 @@ const NewsColumns = [
   {
     title: '操作',  
     key: 'actions',
-    width: 100,
+    width: 80,
     fixed: 'right',
     // 使用 h 函式渲染自定義按鈕
     render (row) {
@@ -235,22 +235,18 @@ const TeamColumns = [
   },
   {
     title: '名稱',
-    width: 60,
     key: 'name'
   },
   {
     title: '信箱',
-    width: 60,
     key: 'email'
   },
   {
     title: '密碼',
-    width: 60,
     key: 'password'
   },
   {
     title: '職務',
-    width: 60,
     key: 'title'
   },
   {
@@ -464,9 +460,21 @@ const save = async (child) => {
   currentAction.value = 'normal'
 }
 
+const logout = () => {
+    localStorage.removeItem('user')
+    window.dispatchEvent(new Event('user-updated'))
+    user.value = null
+    router.push('/')
+  }
+
  onMounted(() => {
     fetchTopics()
     currentColumns.value = TopicsColumns
+
+    const userStr = localStorage.getItem('user')
+      if (userStr) {
+        user.value = userStr
+      }
   })
 
 </script>
@@ -532,11 +540,6 @@ const save = async (child) => {
       color: #fff;
       padding: 10px 20px;
     }
-  }
-
-  .tableContent{
-    max-width: 70%;
-    width: 100%;
   }
 
   .newsDiv{

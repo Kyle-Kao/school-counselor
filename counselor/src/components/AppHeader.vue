@@ -15,7 +15,7 @@
         <div class="auth-buttons">
           <span v-if="user" class="user-name">{{ user.name }}</span>
           <button v-if="!user" @click="goToLogin" class="btn-login">登入</button>
-          <button v-else @click="logout" class="btn-logout">登出</button>
+          <!-- <button v-else @click="logout" class="btn-logout">登出</button> -->
         </div>
       </nav>
     </div>
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 export default {
@@ -32,11 +32,28 @@ export default {
     const router = useRouter()
     const user = ref(null)
 
-    onMounted(() => {
+    const syncUser = () => {
       const userStr = localStorage.getItem('user')
       if (userStr) {
-        user.value = JSON.parse(userStr)
+        user.value = userStr
+      } else {
+        user.value = null
       }
+    }
+
+    const handleUpdate = () => {
+      console.log('123213')
+      syncUser()
+    }
+
+    onMounted(() => {
+      syncUser()
+
+      window.addEventListener('user-updated', handleUpdate)
+    })
+
+    onUnmounted(() => {
+      window.removeEventListener('user-updated', handleUpdate)
     })
 
     const goToLogin = () => {
