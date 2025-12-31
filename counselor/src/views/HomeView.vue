@@ -312,4 +312,27 @@
       background-color: #dc6e31;
     }
   }  
+
+  @media (max-width: 768px) {
+    .imgBox{
+      flex-direction: column;
+    }
+    .contentBox{
+      flex-direction: column;
+    }
+    .btnBox{
+      flex-direction: column;
+      .btn{
+        width: 100%;
+        text-align: center;
+      }
+    }
+    .mainTextArea{
+      width: 100%;
+      flex-direction: column;
+      &>div{
+        width: 100%;
+      }
+    }
+  }
 </style>

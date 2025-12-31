@@ -285,4 +285,13 @@ const fetchProfile = async (id) => {
       flex: 70%;
     }
   }
+
+  @media (max-width: 768px) {
+    .tabBox{
+      flex-wrap: wrap;
+      .tab{
+        flex: 45%;
+      }
+    }
+  }
 </style>

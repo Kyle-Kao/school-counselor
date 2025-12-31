@@ -582,4 +582,13 @@ const logout = () => {
       background-color: #6C757D;
     }
   }
+
+  @media (max-width: 768px) {
+    .dash-container {
+      flex-direction: column;
+      .nav, .rightContent{
+        flex: 100%;
+      }
+    }
+  }
 </style>

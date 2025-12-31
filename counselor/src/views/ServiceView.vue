@@ -189,4 +189,20 @@ const getType = (type) => {
       padding-top: 10px;
     }
   }
+
+  @media (max-width: 768px) {
+    .content{
+      padding: 0;
+    }
+    .imgBox{
+      flex-wrap: wrap;
+      // flex-direction: column;
+      &>div{
+        flex: 45%;
+      }
+    }
+    .issueBox{
+      grid-template-columns: repeat(1, minmax(300px, 1fr)) !important;
+    }
+  }
 </style>

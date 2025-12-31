@@ -101,6 +101,7 @@ const setActive = (id) => {
 }
 
 const getDetail = (news) => {
+  window.scrollTo(0,0)
   onMask.value = true
   currentDetail.value = news
   console.log('click', news)
@@ -261,5 +262,20 @@ const filteredData = computed(() => {
     justify-content: flex-start;
     flex-direction: column;
     padding: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .content{
+      padding: 0;
+      .tabBox{
+        .tab{
+          flex: 45%;
+        }
+      }
+    }
+    .maskCard{
+      width: 90%;
+      height: auto;
+    }
   }
 </style>
