@@ -71,7 +71,7 @@ export default {
 
           alert(`登入成功！ 權限為${response.data.name}`)
           // 重定向到首頁
-          router.push('/')
+          router.push('/dashboard')
         }
       } catch (error) {
         errorMessage.value = error.response?.data?.message || '登入失敗，請檢查郵箱和密碼'
