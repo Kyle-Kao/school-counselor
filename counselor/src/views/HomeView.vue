@@ -61,7 +61,7 @@
 
 <script setup>
   import { ref } from 'vue'
-  import { getTest, getTopics, getNews, getProfile, getServiceTopic } from '@/apis'
+  import { runSql, getTopics, getNews, getProfile, getServiceTopic, welcome } from '@/apis'
   import { onMounted } from 'vue'
 
   defineOptions({
@@ -73,19 +73,46 @@
   const currrentApi = ref('topic')
   const currentInput = ref('')
 
-  const fetchTest = async () => {
+  const fetchWelcome = async () => {
     try {
-      const response = await getTest()
+      await welcome()
     } catch (error) {
       console.error("Error fetching test data:", error)
     }
   }
 
+  const fetchRunSql = async (sqlText) => {
+    try {
+      await runSql({ sql: sqlText })
+    } catch (error) {
+      console.error("Error fetching test data:", error)
+    }
+  }
+
+//   const fetchRunSql = async () => {
+//   try {
+//     const response = await fetch('http://localhost:5173/api/api/general/query', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({ 
+//         sql: 'SELECT * FROM "Topics";' 
+//       })
+//     });
+    
+//     const data = await response.json();
+//     console.log(data);
+//   } catch (error) {
+//     console.error("Error fetching test data:", error);
+//   }
+// };
+
   const setInput = (api) => {
     currrentApi.value = api
     switch (api) {
       case 'topic':
-        currentInput.value = 'SELECT * FROM "Topics";'
+        currentInput.value = 'SELECT * FROM "Test"."Topics";'
       break;
       case 'news':
         currentInput.value = `
@@ -102,11 +129,28 @@
           s."Label" AS "ServiceLabel",  
           n."Status",
           n."Img"
-        FROM "News" AS n
-        LEFT JOIN "Services" AS s ON n."ServiceName" = s."Name";
-        
-        (透過 Left Join，將 News (新聞) 與 Services (服務) 兩個表格關聯起來，並取得服務的標籤 (Label) 欄位。)
+        FROM "Test"."News" AS n
+        LEFT JOIN "Test"."Services" AS s ON n."ServiceName" = s."Name";        
         `
+        // currentInput.value = `
+        // SELECT 
+        //   n."Id",
+        //   n."Title",
+        //   n."Content",
+        //   n."Notice",
+        //   n."Link",
+        //   n."CreateTime",
+        //   n."UpdateTime",
+        //   n."TitleName",
+        //   n."ServiceName",
+        //   s."Label" AS "ServiceLabel",  
+        //   n."Status",
+        //   n."Img"
+        // FROM "News" AS n
+        // LEFT JOIN "Services" AS s ON n."ServiceName" = s."Name";
+        
+        // (透過 Left Join，將 News (新聞) 與 Services (服務) 兩個表格關聯起來，並取得服務的標籤 (Label) 欄位。)
+        // `
       break;
       case 'profile':
         currentInput.value = `
@@ -120,12 +164,27 @@
           s."Email" AS "StaffEmail",
           s."Title" AS "StaffTitle",
           s."Photo" AS "StaffPhoto"
-        FROM "Profile" AS p 
-        LEFT JOIN "Staff" AS s ON p."Id" = s."Id" 
-        WHERE p."Id" = '98765432-10fe-dcba-9876-543210fedcba';
-        
-        (透過Left Join，加上了 WHERE 條件過濾單筆資料)
+        FROM "Test"."CounselorProfiles" AS p 
+        LEFT JOIN "Test"."Staff" AS s ON p."Id" = s."Id" 
+        WHERE p."Id" = '98765432-10fe-dcba-9876-543210fedcba';        
       `
+      //   currentInput.value = `
+      //   SELECT 
+      //     p."Id",
+      //     p."Certification",
+      //     p."Education",
+      //     p."Experience",
+      //     p."Description",
+      //     s."Name" AS "StaffName",
+      //     s."Email" AS "StaffEmail",
+      //     s."Title" AS "StaffTitle",
+      //     s."Photo" AS "StaffPhoto"
+      //   FROM "Profile" AS p 
+      //   LEFT JOIN "Staff" AS s ON p."Id" = s."Id" 
+      //   WHERE p."Id" = '98765432-10fe-dcba-9876-543210fedcba';
+        
+      //   (透過Left Join，加上了 WHERE 條件過濾單筆資料)
+      // `
       break;
       case 'serviceTopic':
         currentInput.value = `
@@ -136,13 +195,25 @@
           s."Type",
           t."Label" AS "topicLabel",
           t."Description" AS "topicDescription"
-        FROM "Services" AS s
-        INNER JOIN "ServiceTopics" AS st ON s."Name" = st."ServiceName"
-        INNER JOIN "Topics" AS t ON st."TopicName" = t."Name";
-
-
-        (多對多的關聯查詢。透過中間表 ServiceTopic 將 Service (服務) 與 Topic (主題) 連接起來)
+        FROM "Test"."Services" AS s
+        INNER JOIN "Test"."ServiceTopic" AS st ON s."Name" = st."ServiceName"
+        INNER JOIN "Test"."Topics" AS t ON st."TopicName" = t."Name";
         `
+        // currentInput.value = `
+        // SELECT 
+        //   s."Name",
+        //   s."Label",
+        //   s."Target",
+        //   s."Type",
+        //   t."Label" AS "topicLabel",
+        //   t."Description" AS "topicDescription"
+        // FROM "Services" AS s
+        // INNER JOIN "ServiceTopics" AS st ON s."Name" = st."ServiceName"
+        // INNER JOIN "Topics" AS t ON st."TopicName" = t."Name";
+
+
+        // (多對多的關聯查詢。透過中間表 ServiceTopic 將 Service (服務) 與 Topic (主題) 連接起來)
+        // `
       break;
     }
   }
@@ -150,20 +221,24 @@
   const getOutput = async () => {
     try {
       let response
-      switch (currrentApi.value) {
-        case 'topic':
-          response = await getTopics()
-        break;
-        case 'news':
-          response = await getNews()
-        break;
-        case 'profile':
-          response = await getProfile({id: '98765432-10fe-dcba-9876-543210fedcba'})
-        break;
-        case 'serviceTopic':
-          response = await getServiceTopic()
-        break;
-      }
+      const data = await runSql({ sql: currentInput.value })
+      response = { data: data.data }
+      // switch (currrentApi.value) {
+      //   case 'topic':
+      //     const data = await runSql({ sql: currentInput.value })
+      //     response = { data: data.data }
+      //     // response = await getTopics()
+      //   break;
+      //   case 'news':
+      //     response = await getNews()
+      //   break;
+      //   case 'profile':
+      //     response = await getProfile({id: '98765432-10fe-dcba-9876-543210fedcba'})
+      //   break;
+      //   case 'serviceTopic':
+      //     response = await getServiceTopic()
+      //   break;
+      // }
       jsonData.value = response.data
     } catch (error) {
       console.error("Error fetching output data:", error)
@@ -171,7 +246,8 @@
   }
 
   onMounted(() => {
-    fetchTest()
+    fetchWelcome()
+    // fetchRunSql()
   })
 
 </script>

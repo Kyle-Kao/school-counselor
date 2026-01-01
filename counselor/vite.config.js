@@ -26,7 +26,7 @@ export default defineConfig({
       '/api': {
         // 代理目標地址
         target: 'http://localhost:5268', 
-        // target: 'https://myproject-814320709930.asia-east1.run.app', 
+        // target: 'https://myproject-814320709930.asia-east1.run.app/', 
         // 允許代理 HTTPS 證書的請求
         secure: false, 
         // 重寫路徑：將 /api 從請求路徑中移除

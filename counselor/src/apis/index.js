@@ -48,3 +48,12 @@ export const removeTopics = (data) => {
 export const updateTopics = (data) => {
   return api.put("/api/updateTopics", data);
 }
+
+// 記錄瀏覽人數
+export const welcome = () => {
+  return api.post("/api/welcome");
+}
+
+export const runSql = (data) => {
+  return api.post("/api/general/query", data);
+}
