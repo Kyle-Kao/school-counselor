@@ -1,7 +1,7 @@
 <template>
   <main>
     <div class="home-container">
-      <div class="title">伴消息</div>
+      <div class="title">關於伴</div>
       <div class="content">
         <div class="subTitle">成立緣由</div>
         <div class="subTitle orange">“一個人或許可以走得很快，但一群人可以走得很遠。”</div>
