@@ -130,7 +130,8 @@
           n."Status",
           n."Img"
         FROM "Test"."News" AS n
-        LEFT JOIN "Test"."Services" AS s ON n."ServiceName" = s."Name";        
+        LEFT JOIN "Test"."Services" AS s ON n."ServiceName" = s."Name"
+        ORDER BY n."CreateTime" DESC;        
         `
         // currentInput.value = `
         // SELECT 

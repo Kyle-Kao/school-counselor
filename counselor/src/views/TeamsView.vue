@@ -32,17 +32,17 @@
             <img :src="currentProfile.staffPhoto" alt="profile">
           </div>
           <div class="name">
-            <span>諮商心理師</span>
+            <span class="colorOrange">諮商心理師</span>
             {{ currentProfile.staffName }}
           </div>
           <ul class="info">
-            <li>{{ currentProfile.certification }}</li>
-            <li>諮商心理師<small> 諮心字第000451號</small></li>
-            <li>諮商心理師<small> 諮心字第000451號</small></li>
-            <li></li>
+            <li>{{ currentProfile?.certification }}</li>
+            <!-- <li>諮商心理師<small> 諮心字第000451號</small></li>
+            <li>諮商心理師<small> 諮心字第000451號</small></li> -->
           </ul>
           <div class="expert">
-            專長
+            <span class="colorOrange">專長</span>
+            
             <div class="badgeBox">
               <!-- <span>{{ currentProfile.description }}</span> -->
               <span>心理評估</span>
@@ -81,14 +81,15 @@
         </div> -->
         <div class="right">
           <div class="description">
-            <div>{{ currentProfile.description }}</div>
+            <div style="font-weight: bold;">{{ currentProfile.description }}</div>
             <!-- <div>喜歡玩樂、旅行、人跟人之間情感的流動，也喜歡自己獨處時的靜好。長期從事兒童、青少年及父母親職教養等工作。在孩子的眼中，是一個童心未泯，很好玩很稱職的大朋友；而在父母家長的心目中，是一個意志堅定，願意在自己人生旅程中風雨同行，真誠溫暖的陪伴者。</div>
             <div>雖知悲歡聚散離合，生命起落無常，但還是決心選擇相信「每一天都是美好的一天！」期許自己永遠都能是一個充滿勇氣、心懷慈悲的諮商師！</div> -->
           </div>
           <div class="experience">
             <ul class="exp">
-              學歷
-              <li>{{ currentProfile.education }}</li>
+              <span class="colorOrange">學歷</span>
+              
+              <li>{{ currentProfile?.education }}</li>
               <!-- <li>國立高雄師範大學 輔導與諮商研究所 碩士</li> -->
             </ul>
             <!-- <ul class="exp">
@@ -99,8 +100,9 @@
               <li>高雄市中小學 專、兼任輔導教師督導</li>
             </ul> -->
             <ul class="exp">
-              經歷
-              <li>{{ currentProfile.experience }}</li>
+              
+              <span class="colorOrange">經歷</span>
+              <li>{{ currentProfile?.experience }}</li>
               <!-- <li>中國泉州遊戲養育親職教育工作坊 訓練講師暨督導</li>
               <li>馬來西亞生命線結構式遊戲治療 培訓助理教師暨督導</li>
               <li>美和科技大學國際潛能開發中心 特約諮商心理師</li>
@@ -208,6 +210,11 @@ const fetchProfile = async (id) => {
 </script>
 
 <style scoped lang="scss">
+  .colorOrange{
+    font-weight: bold;  
+    font-size: 16px;
+    color: #dc6e31;
+  }
   .teams-container {
     // max-width: 1320px;
     max-width: 830px;
@@ -280,6 +287,11 @@ const fetchProfile = async (id) => {
     gap: 20px;
     .left{
       flex: 30%;
+      .info{
+        li{
+          white-space: pre-wrap;
+        }
+      }
     }
     .right{
       flex: 70%;
